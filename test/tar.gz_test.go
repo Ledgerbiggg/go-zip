@@ -6,11 +6,14 @@ import (
 )
 
 func TestTarGz(t *testing.T) {
-	util.TarGz()
+	err := util.TarGz("src", "log")
+	if err != nil {
+		t.Error(err)
+	}
 }
 
 func TestUnTarGz(t *testing.T) {
-	err := util.UnTarGz()
+	err := util.UnTarGz("log.tar.gz", "dest")
 	if err != nil {
 		t.Error(err)
 	}

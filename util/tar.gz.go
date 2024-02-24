@@ -10,12 +10,12 @@ import (
 	"strings"
 )
 
-func TarGz() error {
-	// 源文件夹路径
-	srcFolder := "src"
-
+func TarGz(dst string, src string) error {
 	// 创建目标压缩文件
-	targetFile, err := os.Create("src.tar.gz")
+	if !strings.HasSuffix(dst, ".tar.gz") {
+		dst += ".tar.gz"
+	}
+	targetFile, err := os.Create(dst)
 	if err != nil {
 		log.Println("err when create file:", err)
 		return err
@@ -31,15 +31,14 @@ func TarGz() error {
 	defer tarWriter.Close()
 
 	// 遍历源文件夹下的所有文件和子文件夹
-	err = filepath.Walk(srcFolder, func(path string, info os.FileInfo, err error) error {
+	err = filepath.Walk(src, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			log.Println("err when walk file:", err)
 			return err
 		}
 
 		// 忽略目录本身
-		if path == srcFolder {
-			log.Println("ignore src dir")
+		if path == src {
 			return nil
 		}
 
@@ -51,7 +50,7 @@ func TarGz() error {
 		}
 
 		// 更新 tar 记录的名称
-		relPath, err := filepath.Rel(srcFolder, path)
+		relPath, err := filepath.Rel(src, path)
 		if err != nil {
 			log.Println("err when get relative path:", err)
 			return err
@@ -78,6 +77,8 @@ func TarGz() error {
 			if _, err := io.Copy(tarWriter, file); err != nil {
 				log.Println("err when copy file:", err)
 				return err
+			} else {
+				log.Println("success tar file:", path)
 			}
 		}
 

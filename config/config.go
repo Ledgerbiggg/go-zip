@@ -17,23 +17,34 @@ var Configs *GConfig
 
 // GConfig 结构体表示配置文件的结构
 type GConfig struct {
-	Zip   Zip   `yaml:"zip"`
-	Unzip Unzip `yaml:"unzip"`
+	Zip     Zip     `yaml:"zip"`
+	Unzip   Unzip   `yaml:"unzip"`
+	TarGz   TarGz   `yaml:"tar-gz"`
+	UntarGz UntarGz `yaml:"untar-gz"`
 }
 
 type Zip struct {
 	Enable bool   `yaml:"enable"`
 	Name   string `yaml:"name"`
 	Dir    string `yaml:"dir"`
-	Thread int    `yaml:"threadCount"`
-	Level  string `yaml:"compressionLevel"`
 }
 
 type Unzip struct {
 	Enable bool   `yaml:"enable"`
 	Name   string `yaml:"name"`
 	Dir    string `yaml:"dir"`
-	Thread int    `yaml:"threadCount"`
+}
+
+type TarGz struct {
+	Enable bool   `yaml:"enable"`
+	Name   string `yaml:"name"`
+	Dir    string `yaml:"dir"`
+}
+
+type UntarGz struct {
+	Enable bool   `yaml:"enable"`
+	Name   string `yaml:"name"`
+	Dir    string `yaml:"dir"`
 }
 
 // LoadConfig viper读取yaml

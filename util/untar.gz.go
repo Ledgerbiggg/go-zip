@@ -9,17 +9,19 @@ import (
 	"path/filepath"
 )
 
-func UnTarGz() error {
-	// 要解压缩的文件
-	fileName := "src.tar.gz"
-
+func UnTarGz(src string, dest string) error {
 	// 打开要解压缩的文件
-	file, err := os.Open(fileName)
+	file, err := os.Open(src)
 	if err != nil {
 		log.Println("open file error:", err)
 		return err
 	}
 	defer file.Close()
+
+	err = os.Mkdir(dest, os.ModePerm)
+	if err != nil {
+		//log.Println(dest+"dir is exist", err)
+	}
 
 	// 创建 gzip 读取器
 	gzipReader, err := gzip.NewReader(file)
@@ -44,7 +46,7 @@ func UnTarGz() error {
 			return err
 		}
 
-		targetPath := filepath.Join(".", header.Name)
+		targetPath := filepath.Join("."+"\\"+dest, header.Name)
 
 		// 根据文件类型执行不同的操作
 		switch header.Typeflag {
@@ -66,6 +68,8 @@ func UnTarGz() error {
 			if _, err := io.Copy(fileToWrite, tarReader); err != nil {
 				log.Println("copy error:", err)
 				return err
+			} else {
+				log.Println("success unzip file:", header.Name)
 			}
 		}
 	}
