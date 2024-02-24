@@ -2,67 +2,15 @@ package util
 
 import (
 	"archive/zip"
-	"fmt"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 )
 
-func Unzip(src string) error {
-	// 打开 ZIP 文件
-	zipFile, err := zip.OpenReader(src)
-	if err != nil {
-		fmt.Println("cant open zip:", err)
-		return err
-	}
-	defer zipFile.Close()
-
-	// 遍历 ZIP 文件中的文件和文件夹
-	for _, file := range zipFile.File {
-		// 打印当前文件名
-		fmt.Println("unzipping:", file.Name)
-
-		// 打开 ZIP 文件中的文件
-		fileReader, err := file.Open()
-		if err != nil {
-			fmt.Println("unzipping error:", err)
-			return err
-		}
-		defer fileReader.Close()
-
-		if file.FileInfo().IsDir() {
-			err := os.Mkdir("dest\\"+file.Name, os.ModePerm)
-			if err != nil {
-				fmt.Println("cant create dir:", err)
-			}
-			continue
-		}
-
-		// 创建目标文件
-		targetFile, err := os.Create("dest\\" + file.Name)
-		if err != nil {
-			fmt.Println("cant create file:", err)
-			return err
-		}
-		defer targetFile.Close()
-
-		// 将 ZIP 文件中的文件内容复制到目标文件中
-		_, err = io.Copy(targetFile, fileReader)
-		if err != nil {
-			fmt.Println("cant copy:", err)
-			return err
-		}
-
-		fmt.Println("success unzip file:", file.Name)
-	}
-
-	fmt.Println("success unzip file:", src)
-	return nil
-}
-
-func Zip(dst string) (err error) {
-	var src = "src"
+// Zip 压缩
+func Zip(dst string, src string) (err error) {
 	// 创建准备写入的文件
 	fw, err := os.Create(dst)
 	defer fw.Close()
@@ -81,7 +29,7 @@ func Zip(dst string) (err error) {
 	return filepath.Walk(src, func(path string, fi os.FileInfo, errBack error) (err error) {
 		// 处理遍历过程中的错误
 		if errBack != nil {
-			fmt.Println("filepath.Walk:", errBack)
+			log.Println("filepath.Walk:", errBack)
 			return errBack
 		}
 
@@ -99,14 +47,14 @@ func Zip(dst string) (err error) {
 		}
 
 		if err != nil {
-			fmt.Println("fh error:", err)
+			log.Println("fh error:", err)
 			return
 		}
 
 		// 使用 zip.Writer.CreateHeader 方法创建一个新的文件并得到一个 io.Writer 对象
 		w, err := zw.CreateHeader(fh)
 		if err != nil {
-			fmt.Println("w error:", err)
+			log.Println("w error:", err)
 			return
 		}
 
@@ -120,13 +68,14 @@ func Zip(dst string) (err error) {
 
 		defer fr.Close()
 		if err != nil {
-			fmt.Println("fr error:", err)
+			log.Println("fr error:", err)
 			return
 		}
 
 		_, errBack = io.Copy(w, fr)
+		log.Println("success zip file:", fh.Name)
 		if errBack != nil {
-			fmt.Println("written error:", errBack)
+			log.Println("written error:", errBack)
 			return
 		}
 		return nil

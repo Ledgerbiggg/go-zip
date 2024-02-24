@@ -1,0 +1,24 @@
+zip:
+  # 是否启用
+  enable: true
+  # 解压成为的压缩包名称
+  name: log.zip
+  # 压缩的源目录(不建议修改),压缩包会放在程序的根目录下
+  dir: src
+
+
+unzip:
+  # 是否启用
+  enable: true
+  # 需要被解压的压缩包名称
+  name: log.zip
+  # 解压到该目录下(不建议修改),压缩包请放置程序的根目录下
+  dir: dest
+
+
+
+
+
+
+
+
